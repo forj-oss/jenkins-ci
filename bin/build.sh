@@ -47,7 +47,12 @@ else
    PUSH=true
 fi
 
+if [ "$DOCKER_CMD" = "" ]
+then
+   DOCKER_CMD="sudo docker"
+fi
+
 echo "-------------------------"
 set -x
-[ $PUSH = true ] && sudo docker pull $TAG_NAME || echo "Building it from scratch"
-sudo docker build $PROXY $TAG_ARG $JENKINS_VERSION_ARG $DOCKER_VERSION_ARG $JENKINS_INSTALL_URL_FLAG .
+[ $PUSH = true ] && $DOCKER_CMD pull $TAG_NAME || echo "Building it from scratch"
+$DOCKER_CMD build $PROXY $TAG_ARG $JENKINS_VERSION_ARG $DOCKER_VERSION_ARG $JENKINS_INSTALL_URL_FLAG .
