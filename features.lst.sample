@@ -1,0 +1,18 @@
+# For details about features.lst, see https://github.com/forj-oss/jenkins-install-inits
+# To initialize with admin account and general jenkins in read only mode for anonymous.
+#feature:basic-security
+
+# To configure proxy setting in jenkins
+#feature:proxy
+
+# To initialize a job DSL seed-job
+#feature:seed-job
+
+# To predefine slave agent port to 50000
+#feature:tcp-slave-agent-port
+
+# To properly configure mesos plugin
+#feature:mesos
+
+# To install github plugins
+#plugin:github

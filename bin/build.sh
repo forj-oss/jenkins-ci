@@ -1,0 +1,53 @@
+#!/bin/bash -e
+#
+#
+
+BASE_TAG="jenkins-dood"
+
+JENKINS_FEATURES_REPO=https://github.com/forj-oss/jenkins-install-inits
+
+if [ "$http_proxy" != "" ]
+then
+   PROXY=" --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy --build-arg no_proxy=$no_proxy"
+   echo "Using your local proxy setting : $http_proxy"
+   if [ "$no_proxy" != "" ]
+   then
+      PROXY="$PROXY --build-arg no_proxy=$no_proxy"
+      echo "no_proxy : $http_proxy"
+   fi
+fi
+
+if [ "$DOCKER_VERSION" != "" ]
+then
+   DOCKER_VERSION_ARG="--build-arg DOCKER_VERSION=$DOCKER_VERSION"
+fi
+
+if [ "$JENKINS_VERSION" = "" ]
+then
+   JENKINS_VERSION=$LATEST_JENKINS_VERSION
+fi
+JENKINS_VERSION_ARG="--build-arg JENKINS_VERSION=$JENKINS_VERSION"
+
+if [ "$1" != "" ]
+then
+   TAG_NAME="$1"
+else
+   TAG_NAME="$BASE_TAG:test"
+fi
+TAG_ARG="-t $TAG_NAME"
+
+[[ ! -z $JENKINS_INSTALL_INITS_URL ]] && JENKINS_INSTALL_URL_FLAG="--build-arg JENKINS_INSTALL_INITS_URL=$JENKINS_INSTALL_INITS_URL"
+
+if [ "$(echo "$TAG_NAME" | awk ' $1 ~ /\//')" = "" ]
+then
+   echo "Simply tagging to '$TAG_NAME'"
+   PUSH=false
+else
+   echo "tagging to '$TAG_NAME'."
+   PUSH=true
+fi
+
+echo "-------------------------"
+set -x
+[ $PUSH = true ] && sudo docker pull $TAG_NAME || echo "Building it from scratch"
+sudo docker build $PROXY $TAG_ARG $JENKINS_VERSION_ARG $DOCKER_VERSION_ARG $JENKINS_INSTALL_URL_FLAG .
