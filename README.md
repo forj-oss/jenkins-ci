@@ -15,7 +15,7 @@ We introduced several new features, like:
 Usually, you won't do that, because you want to build your own jenkins with the list of features you need. But if you want to see a basic version of jenkins, you can do the following:
 
 ```bash
-docker run -it --rm -p 8080:8080 forjdevops/jenkins-dood:1.654
+docker run -it --rm -p 8080:8080 forjdevops/jenkins-dood:latest_1.658
 ```
 
 ## Jenkins version and docker tags
@@ -25,25 +25,30 @@ A docker image is versionned through his tag version and then pushed. Then on yo
 Ex:
 
 ```Dockerfile
-FROM forjdevops/jenkins-dood:1.642
+FROM forjdevops/jenkins-dood:latest_1.642
 ```
 
-We deliver several different jenkins version and maintain some of them. For docker image tagging, we follow those rules:
-- A new version of jenkins gets tag like the jenkins version prefixed by the project release ie `<ReleaseVersion>_<JenkinsVersion>`.
+We deliver several different jenkins version and maintain some of them.
+For docker image tagging, we follow those rules:
+- Some version of jenkins (3 versions) gets a tag prefixed by
+  the project release ie `<ReleaseVersion>_<JenkinsVersion>`.
 
-  Ex: `0.2_1.654`
-- A branch of version. We push 2 different branches: 1.6x and 2.x. Latest version version of a branch gets named as `<ReleaseVersion>_<BranchVersion>_latest`.
+  Ex: `0.2_1.658`, `0.2_1.642`, `0.2_2.50`
 
-  Ex: `0.2_2.x_latest`
+- A branch of version. We maintain 3 different branches: 1.6x-latest, 1.6x-stable and 2.x.
+  Latest version of a branch gets named as `<ReleaseVersion>_<BranchVersion>-latest`.
+
+  Ex: `0.2_2.x-latest`
+
 - `<ReleaseVersion>_latest` will refer to the latest version for a dedicated version of this project.
 
-  ex: `0.2_latest`
+  Ex: `0.2_latest`
 
-- `latest_<jenkins_version|latest>` will refer to the HEAD of the `jenkins-ci` repository. It will be updated any time a PR is merged.
+- `latest_<jenkins_version|latest>` will refer to the HEAD of the `jenkins-ci` repository. It will be updated any time a PR on jenkins-ci is merged.
 
 - latest is the default tag for docker. We use it to refer to the latest version of jenkins, as found in http://pkg.jenkins.io/redhat/
 
-  Ex: `latest` refer to the latest version of jenkins and version of this project.
+  Ex: `latest` refer to the latest version of jenkins and version of this project ie is identical to `latest_latest`
 
 
 To get a list of published and available versions, connect to [Docker Registry](https://hub.dockercom/forjdevops/jenkins-dood/tags)

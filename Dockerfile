@@ -11,8 +11,6 @@ ARG DOCKER_VERSION=1.10.3
 
 ARG JENKINS_VERSION=1.642
 
-ARG JENKINS_INSTALL_INITS_URL=https://github.com/forj-oss/jenkins-install-inits/raw/master
-
 # Jenkins is ran with user `jenkins`, uid = 1000
 # If you bind mount a volume from host/volume from a data container,
 # ensure you use same uid
@@ -41,6 +39,7 @@ COPY ref/jenkins.start.d/README.md $JENKINS_DATA_REF/jenkins.start.d/
 RUN chown -R jenkins $JENKINS_HOME $JENKINS_DATA_REF
 
 COPY jenkins.sh /usr/local/bin/
+ARG JENKINS_INSTALL_INITS_URL=https://github.com/forj-oss/jenkins-install-inits/raw/master
 ADD $JENKINS_INSTALL_INITS_URL/jenkins-install.sh /usr/local/bin/
 RUN chmod +rx /usr/local/bin/jenkins-install.sh
 

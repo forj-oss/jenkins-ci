@@ -13,7 +13,7 @@
 # Then this job should implement the following code in jenkins
 # And jenkins-ci images for each flavors will be officially pushed to the internal registry.
 
-TAG_BASE="forjdevops/jenkins-dood"
+export TAG_BASE="forjdevops/jenkins-dood"
 
 if [ ! -f VERSION ] || [ ! -f releases.lst ]
 then
@@ -21,9 +21,17 @@ then
    exit 1
 fi
 
+if [ "$1" = "--dry-run" ]
+then
+    DRY_RUN="--dry-run"
+    shift
+else
+    DRY_RUN=""
+fi
+
 case "$1" in
   release-it )
-    VERSION=$(cat VERSION)
+    export VERSION=$(cat VERSION)
     if [ "$(git tag -l $VERSION)" = "" ]
     then
        echo "Unable to publish a release version. git tag missing"
@@ -35,11 +43,11 @@ case "$1" in
        echo "'$COMMIT' is not tagged with '$VERSION'. Only commit tagged can publish officially this tag as docker image."
        exit 1
     fi
-    VERSION_TAG=${VERSION}_
+    export VERSION_TAG=${VERSION}_
     ;;
   latest )
-    VERSION=latest
-    VERSION_TAG=latest_
+    export VERSION=latest
+    export VERSION_TAG=latest_
     ;;
   *)
     echo "Script used to publish release and latest code ONLY. If you want to test a fork, use build. It will create a local docker image jenkins-dood:test"
@@ -49,24 +57,32 @@ esac
 cat releases.lst | while read LINE
 do
    [[ "$LINE" =~ ^# ]] && continue
-   export JENKINS_VERSION="$(echo "$LINE" | awk -F'|' '{ print $1 }')"
-   TAGS="$(echo "$LINE" | awk -F'|' '{ print $2 }' | sed 's/,/ /g')"
-   echo "=============== Building jenkins-dood flavor Jenkins $JENKINS_VERSION"
-   $(dirname $0)/build.sh $TAG_BASE:${VERSION}_$JENKINS_VERSION
-   echo "=============== Publishing flavored tags"
-   for TAG in $TAGS
-   do
-      echo "=> $TAG_BASE:${VERSION}_$TAG"
-      sudo docker tag $TAG_BASE:${VERSION}_$JENKINS_VERSION $TAG_BASE:${VERSION}_$TAG
-      sudo docker push $TAG_BASE:${VERSION}_$TAG
-   done
-   echo "=============== DONE - Flavor Jenkins $JENKINS_VERSION"
+
+   if [ "$DRY_RUN"  = "--dry-run" ]
+   then
+       bin/do_build-tag.sh $DRY_RUN "$LINE"
+   else
+       APP_VERSION=$(echo "$LINE" | awk -F'|' '{ print $1 }')
+       LOG=logs/$APP_VERSION.log
+       echo "LOG: $LOG"
+       mkdir -p logs
+       touch logs/$APP_VERSION.run
+       nohup bin/do_build-tag.sh $DRY_RUN "$LINE" > $LOG 2>&1 &
+       sleep 2
+   fi
 done
-export JENKINS_VERSION="$(cat releases.lst | tail -n 1 | awk -F'|' '{ print $1 }')"
-echo "=============== Publishing latest tags with Default Flavor $JENKINS_VERSION embedded.
-=> $TAG_BASE:$VERSION"
-sudo docker push $TAG_BASE:$VERSION
-echo "=> $TAG_BASE:latest ($TAG_BASE:${VERSION}_$JENKINS_VERSION)"
-sudo docker tag $TAG_BASE:${VERSION}_$JENKINS_VERSION $TAG_BASE
-sudo docker push $TAG_BASE
-echo "=============== DONE"
+
+if [ "$DRY_RUN"  = "--dry-run" ]
+then
+   exit
+fi
+
+RUN=$(ls -l logs/*.run | wc -l)
+
+while [ $RUN -ne 0 ]
+do
+    printf "%s publish running\e[J\r" $RUN
+    sleep 2
+    RUN=$(ls -l logs/*.run | wc -l)
+done
+echo "DONE"
