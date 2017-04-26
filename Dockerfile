@@ -38,7 +38,9 @@ COPY ref/plugins/README.md $JENKINS_DATA_REF/plugins
 COPY ref/init.groovy.d/README.md $JENKINS_DATA_REF/init.groovy.d/
 COPY ref/jenkins.start.d/README.md $JENKINS_DATA_REF/jenkins.start.d/
 
-RUN chown -R jenkins $JENKINS_HOME $JENKINS_DATA_REF
+RUN printf "$JENKINS_VERSION" > $JENKINS_HOME/jenkins.install.UpgradeWizard.state && \
+    printf "$JENKINS_VERSION" > $JENKINS_HOME/jenkins.install.InstallUtil.lastExecVersion && \
+    chown -R jenkins $JENKINS_HOME $JENKINS_DATA_REF
 
 COPY jenkins.sh /usr/local/bin/
 ADD $JENKINS_INSTALL_INITS_URL/jenkins-install.sh /usr/local/bin/
