@@ -1,4 +1,7 @@
 #
-1.642|stable,1.6x-stable
+1.642|1.6x-stable
 1.658|1.6x-latest
-2.50|2.x-latest,latest
+# LTS
+2.60|stable,2.x-stable
+#
+2.79|2.x-latest,latest
