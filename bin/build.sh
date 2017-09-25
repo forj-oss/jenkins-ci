@@ -22,9 +22,12 @@ then
    DOCKER_VERSION_ARG="--build-arg DOCKER_VERSION=$DOCKER_VERSION"
 fi
 
+LATEST_JENKINS_VERSION="$(awk -F"|" '$2 ~ /^latest/ || $2 ~ /,latest/ { printf "%s\n",$1 }' releases.lst)"
+
 if [ "$JENKINS_VERSION" = "" ]
 then
    JENKINS_VERSION=$LATEST_JENKINS_VERSION
+   echo "Using Jenkins version '$JENKINS_VERSION'."
 fi
 JENKINS_VERSION_ARG="--build-arg JENKINS_VERSION=$JENKINS_VERSION"
 
