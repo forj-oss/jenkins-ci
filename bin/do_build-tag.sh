@@ -38,4 +38,4 @@ then
    set +x
    echo "=============== DONE"
 fi
-rm -f logs/$JENKINS_VERSION.run
+rm -f logs/$VERSION_TAG$JENKINS_VERSION.run
