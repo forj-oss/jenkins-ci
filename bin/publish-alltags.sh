@@ -63,10 +63,10 @@ do
        bin/do_build-tag.sh $DRY_RUN "$LINE"
    else
        APP_VERSION=$(echo "$LINE" | awk -F'|' '{ print $1 }')
-       LOG=logs/$APP_VERSION.log
+       LOG=logs/$VERSION_TAG$APP_VERSION.log
        echo "LOG: $LOG"
        mkdir -p logs
-       touch logs/$APP_VERSION.run
+       touch logs/$VERSION_TAG$APP_VERSION.run
        nohup bin/do_build-tag.sh $DRY_RUN "$LINE" > $LOG 2>&1 &
        sleep 2
    fi
@@ -78,11 +78,17 @@ then
 fi
 
 RUN=$(ls -l logs/*.run | wc -l)
+RUN_OLD=0
 
-while [ $RUN -ne 0 ]
+while [ ${RUN} -ne 0 ]
 do
-    printf "%s publish running\e[J\r" $RUN
+    if [[ ${RUN_OLD} -ne ${RUN} ]]
+    then
+       runnings="$(ls logs/*.run 2>/dev/null | sed 's|logs/\(.*\)\.run|\1|g'| tr '\n' ' ')"
+       printf "%s publish running ($runnings)\n" ${RUN}
+       RUN_OLD=${RUN}
+    fi
     sleep 2
-    RUN=$(ls -l logs/*.run | wc -l)
+    RUN=$(ls -l logs/*.run 2>/dev/null| wc -l)
 done
 echo "DONE"
