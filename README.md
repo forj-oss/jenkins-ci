@@ -15,7 +15,7 @@ We introduced several new features, like:
 Usually, you won't do that, because you want to build your own jenkins with the list of features you need. But if you want to see a basic version of jenkins, you can do the following:
 
 ```bash
-docker run -it --rm -p 8080:8080 forjdevops/jenkins-dood:latest_1.658
+docker run -it --rm -p 8080:8080 forjdevops/jenkins:latest_1.658
 ```
 
 ## Jenkins version and docker tags
@@ -25,7 +25,7 @@ A docker image is versionned through his tag version and then pushed. Then on yo
 Ex:
 
 ```Dockerfile
-FROM forjdevops/jenkins-dood:latest_1.642
+FROM forjdevops/jenkins:latest_1.642
 ```
 
 We deliver several different jenkins version and maintain some of them.
@@ -51,7 +51,7 @@ For docker image tagging, we follow those rules:
   Ex: `latest` refer to the latest version of jenkins and version of this project ie is identical to `latest_latest`
 
 
-To get a list of published and available versions, connect to [Docker Registry](https://hub.dockercom/forjdevops/jenkins-dood/tags)
+To get a list of published and available versions, connect to [Docker Registry](https://hub.dockercom/forjdevops/jenkins/tags)
 
 This project maintains a collection of tags, ie a limited collection of version of jenkins. To get the list of maintained version, read [releases.lst](releases.lst)
 
@@ -61,7 +61,7 @@ This is the most common use case.
 
 Create a Dockerfile:
 
-    FROM forjdevops/jenkins-dood:1.642
+    FROM forjdevops/jenkins:1.642
 
     # To install plugins/features
     COPY features.lst /tmp/

@@ -21,10 +21,6 @@ RUN curl -so /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenk
     yum -y install java jenkins-$JENKINS_VERSION unzip git && \
     yum clean all
 
-# TODO: Remove this, to use a host binary instead as soon as it has been built statically.
-# Installing Docker bin
-RUN curl -so /bin/docker https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VERSION && chmod +x /bin/docker
-
 ENV TINI_SHA 066ad710107dc7ee05d3aa6e4974f01dc98f3888
 RUN curl -fL https://github.com/krallin/tini/releases/download/v0.5.0/tini-static -o /bin/tini && chmod +x /bin/tini \
   && echo "$TINI_SHA /bin/tini" | sha1sum -c -

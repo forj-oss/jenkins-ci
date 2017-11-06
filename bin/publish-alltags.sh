@@ -13,7 +13,7 @@
 # Then this job should implement the following code in jenkins
 # And jenkins-ci images for each flavors will be officially pushed to the internal registry.
 
-export TAG_BASE="forjdevops/jenkins-dood"
+export TAG_BASE="forjdevops/jenkins"
 
 if [ ! -f VERSION ] || [ ! -f releases.lst ]
 then
@@ -50,7 +50,7 @@ case "$1" in
     export VERSION_TAG=latest_
     ;;
   *)
-    echo "Script used to publish release and latest code ONLY. If you want to test a fork, use build. It will create a local docker image jenkins-dood:test"
+    echo "Script used to publish release and latest code ONLY. If you want to test a fork, use build. It will create a local docker image jenkins:test"
     exit 1
 esac
 
