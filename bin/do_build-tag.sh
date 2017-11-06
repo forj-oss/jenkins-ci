@@ -11,7 +11,7 @@ fi
 
 export JENKINS_VERSION="$(echo "$1" | awk -F'|' '{ print $1 }')"
 TAGS="$(echo "$1" | awk -F'|' '{ print $2 }' | sed 's/,/ /g')"
-echo "=============== Building jenkins-dood flavor Jenkins $JENKINS_VERSION"
+echo "=============== Building jenkins flavor Jenkins $JENKINS_VERSION"
 $(dirname $0)/build.sh $TAG_BASE:${VERSION}_$JENKINS_VERSION
 echo "=============== Publishing flavored tags: $TAGS"
 for TAG in $TAGS

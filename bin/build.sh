@@ -2,7 +2,7 @@
 #
 #
 
-BASE_TAG="jenkins-dood"
+BASE_TAG="jenkins"
 
 JENKINS_FEATURES_REPO=https://github.com/forj-oss/jenkins-install-inits
 
