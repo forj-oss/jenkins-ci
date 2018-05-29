@@ -6,17 +6,22 @@
 # can then change this, upgrade plugins, etc.
 copy_reference_file() {
 	f=${1%/} 
-	echo "$f" >> $COPY_REFERENCE_FILE_LOG
     rel=${f:23}
     dir=$(dirname ${f})
-    echo " $f -> $rel" >> $COPY_REFERENCE_FILE_LOG
-	if [[ ! -e /var/jenkins_home/${rel} ]] || [[ ${rel} = jenkins.install.UpgradeWizard.state ]] || [[ ${rel} = jenkins.install.InstallUtil.lastExecVersion ]]
+	if [[ ! -e /var/jenkins_home/${rel} ]]
 	then
 		echo "copy $rel to JENKINS_HOME" >> $COPY_REFERENCE_FILE_LOG
 		mkdir -p /var/jenkins_home/${dir:23}
 		cp -r /usr/share/jenkins/ref/${rel} /var/jenkins_home/${rel};
 		# pin plugins on initial copy
 		[[ ${rel} == plugins/*.jpi ]] && touch /var/jenkins_home/${rel}.pinned
+    else
+        if [[ ${rel} = jenkins.install.UpgradeWizard.state ]] || [[ ${rel} = jenkins.install.InstallUtil.lastExecVersion ]] || [[ ${rel} ~= ^plugins/.*\.hpi$ ]]
+        then
+            echo "refresh $rel to JENKINS_HOME" >> $COPY_REFERENCE_FILE_LOG
+    		mkdir -p /var/jenkins_home/${dir:23}
+	    	cp -r /usr/share/jenkins/ref/${rel} /var/jenkins_home/${rel};
+        fi
 	fi; 
 }
 
