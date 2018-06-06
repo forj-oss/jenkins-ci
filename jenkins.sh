@@ -16,7 +16,7 @@ copy_reference_file() {
 		# pin plugins on initial copy
 		[[ ${rel} == plugins/*.jpi ]] && touch /var/jenkins_home/${rel}.pinned
     else
-        if [[ ${rel} = jenkins.install.UpgradeWizard.state ]] || [[ ${rel} = jenkins.install.InstallUtil.lastExecVersion ]] || [[ ${rel} =~ ^.*\.hpi$ ]]
+        if [[ ${rel} = jenkins.install.UpgradeWizard.state ]] || [[ ${rel} = jenkins.install.InstallUtil.lastExecVersion ]] || [[ ${rel} =~ ^.*\.hpi$ ]] || [[ ${rel} =~ ^.*\.groovy$ ]]
         then
             echo "refresh $rel to JENKINS_HOME" >> $COPY_REFERENCE_FILE_LOG
     		mkdir -p /var/jenkins_home/${dir:23}
