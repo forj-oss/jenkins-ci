@@ -31,7 +31,7 @@ RUN useradd -d "$JENKINS_HOME" -u 1000 -m -s /bin/bash jenkins && \
     yum clean all
 
 COPY jenkins.sh /usr/local/bin/
-ARG JPLUGINS_VERSION=0.0.6
+ARG JPLUGINS_VERSION=latest
 ARG JPLUGINS_URL=https://github.com/forj-oss/jplugins/releases/download/${JPLUGINS_VERSION}/jplugins
 ADD $JPLUGINS_URL /usr/local/bin/jplugins
 RUN chmod +rx /usr/local/bin/jplugins && \
