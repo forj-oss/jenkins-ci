@@ -23,7 +23,8 @@ copy_reference_file() {
 # if `docker run` first argument start with `--` the user is passing jenkins launcher arguments
 if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
    export -f copy_reference_file
-   rm -f /var/jenkins_home/*.hpi /var/jenkins_home/*.jpi /var/jenkins_home/init.groovy.d/*.groovy 
+   echo "Cleaning plugins, and init.groovy.d"
+   rm -f /var/jenkins_home/plugins/*.hpi /var/jenkins_home/plugins/*.jpi /var/jenkins_home/init.groovy.d/*.groovy 
    find /usr/share/jenkins/ref/ -type f -exec bash -c "copy_reference_file '{}'" \;
 
    for FILE in /var/jenkins_home/jenkins.start.d/*
