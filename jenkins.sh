@@ -8,21 +8,13 @@ copy_reference_file() {
 	f=${1%/} 
     rel=${f:23}
     dir=$(dirname ${f})
-	if [[ ! -e /var/jenkins_home/${rel} ]]
-	then
-		echo "copy $rel to JENKINS_HOME" >> $COPY_REFERENCE_FILE_LOG
-		mkdir -p /var/jenkins_home/${dir:23}
-		cp -r /usr/share/jenkins/ref/${rel} /var/jenkins_home/${rel};
-		# pin plugins on initial copy
-		[[ ${rel} == plugins/*.jpi ]] && touch /var/jenkins_home/${rel}.pinned
-    else
-        if [[ ${rel} = jenkins.install.UpgradeWizard.state ]] || [[ ${rel} = jenkins.install.InstallUtil.lastExecVersion ]] || [[ ${rel} =~ ^.*\.hpi$ ]] || [[ ${rel} =~ ^.*\.groovy$ ]]
-        then
-            echo "refresh $rel to JENKINS_HOME" >> $COPY_REFERENCE_FILE_LOG
-    		mkdir -p /var/jenkins_home/${dir:23}
-	    	cp -r /usr/share/jenkins/ref/${rel} /var/jenkins_home/${rel};
-        fi
-	fi; 
+    if [[ ${rel} = README.md ]]
+    then
+        return
+    fi
+    echo "Ref: $rel copied."
+    mkdir -p /var/jenkins_home/${dir:23}
+    cp -r /usr/share/jenkins/ref/${rel} /var/jenkins_home/${rel};
 }
 
 # Remove jenkins wizard at startup time.
@@ -31,7 +23,7 @@ copy_reference_file() {
 # if `docker run` first argument start with `--` the user is passing jenkins launcher arguments
 if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
    export -f copy_reference_file
-   echo "--- Copying files at $(date)" >> $COPY_REFERENCE_FILE_LOG
+   rm -f /var/jenkins_home/*.hpi /var/jenkins_home/*.jpi /var/jenkins_home/init.groovy.d/*.groovy 
    find /usr/share/jenkins/ref/ -type f -exec bash -c "copy_reference_file '{}'" \;
 
    for FILE in /var/jenkins_home/jenkins.start.d/*
