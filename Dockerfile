@@ -24,9 +24,10 @@ RUN chmod +x /bin/tini && \
 # NOTE: for Jenkins 2.0 or latest, remove the embedded plugins before the feature.lst execution, to avoid plugin duplicates
 
 ARG JENKINS_VERSION=1.642
-ADD http://pkg.jenkins-ci.org/redhat/jenkins.repo /etc/yum.repos.d/jenkins.repo
+ARG OS=redhat
+ADD https://pkg.jenkins.io/$OS/jenkins.repo /etc/yum.repos.d/jenkins.repo
 RUN useradd -d "$JENKINS_HOME" -u 1000 -m -s /bin/bash jenkins && \
-    rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key && \
+    rpm --import https://pkg.jenkins.io/$OS/jenkins.io.key && \
     yum -y install java jenkins-$JENKINS_VERSION unzip git && \
     yum clean all
 
