@@ -47,6 +47,4 @@ VOLUME /var/jenkins_home
 
 EXPOSE 8080 8443 50000
 
-USER jenkins
-
-ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/jenkins.sh" ]
+ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/entrypoint.sh" ]
