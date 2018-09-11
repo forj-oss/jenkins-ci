@@ -17,8 +17,7 @@ copy_reference_file() {
     cp -r /usr/share/jenkins/ref/${rel} /var/jenkins_home/${rel};
 }
 
-# Remove jenkins wizard at startup time.
-
+echo "User context is : $(id)"
 
 # if `docker run` first argument start with `--` the user is passing jenkins launcher arguments
 if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then

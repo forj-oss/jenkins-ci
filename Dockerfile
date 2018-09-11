@@ -31,7 +31,7 @@ RUN useradd -d "$JENKINS_HOME" -u 1000 -m -s /bin/bash jenkins && \
     yum -y install java jenkins-$JENKINS_VERSION unzip git && \
     yum clean all
 
-COPY jenkins.sh /usr/local/bin/
+COPY *.sh /usr/local/bin/
 ARG JPLUGINS_VERSION=latest
 ARG JPLUGINS_URL=https://github.com/forj-oss/jplugins/releases/download/${JPLUGINS_VERSION}/jplugins
 ADD $JPLUGINS_URL /usr/local/bin/jplugins
@@ -47,6 +47,4 @@ VOLUME /var/jenkins_home
 
 EXPOSE 8080 8443 50000
 
-USER jenkins
-
-ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/jenkins.sh" ]
+ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/entrypoint.sh" ]
