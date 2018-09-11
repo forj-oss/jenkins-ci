@@ -23,8 +23,8 @@ RUN chmod +x /bin/tini && \
 # Retrieve list of embedded plugins in jenkins war file
 # NOTE: for Jenkins 2.0 or latest, remove the embedded plugins before the feature.lst execution, to avoid plugin duplicates
 
-ARG JENKINS_VERSION=1.642
-ARG OS=redhat
+ARG JENKINS_VERSION=1.642.4
+ARG OS=redhat-stable
 ADD https://pkg.jenkins.io/$OS/jenkins.repo /etc/yum.repos.d/jenkins.repo
 RUN useradd -d "$JENKINS_HOME" -u 1000 -m -s /bin/bash jenkins && \
     rpm --import https://pkg.jenkins.io/$OS/jenkins.io.key && \

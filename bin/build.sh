@@ -39,9 +39,9 @@ else
 fi
 TAG_ARG="-t $TAG_NAME"
 
-if [[ "$2" != "" ]]
+if [[ "$2" != "redhat-stable" ]]
 then
-    STABLE="--build-arg OS=$2"
+    OS="--build-arg OS=redhat"
 fi
 
 [[ ! -z $JENKINS_INSTALL_INITS_URL ]] && JENKINS_INSTALL_URL_FLAG="--build-arg JENKINS_INSTALL_INITS_URL=$JENKINS_INSTALL_INITS_URL"
@@ -63,4 +63,4 @@ fi
 echo "-------------------------"
 set -x
 [ $PUSH = true ] && $DOCKER_CMD pull $TAG_NAME || echo "Building it from scratch"
-$DOCKER_CMD build $PROXY $TAG_ARG $STABLE $JENKINS_VERSION_ARG $DOCKER_VERSION_ARG $JENKINS_INSTALL_URL_FLAG .
+$DOCKER_CMD build $PROXY $TAG_ARG $OS $JENKINS_VERSION_ARG $DOCKER_VERSION_ARG $JENKINS_INSTALL_URL_FLAG .
