@@ -3,6 +3,11 @@
 
 if [[ "$(id -un)" = "root" ]]
 then
+    if [[ "$UID" != "" ]] && [[ "$GID" != "" ]]
+    then
+        docker-lu jenkins $UID jenkins $GID
+    fi
+
     if [[ "$DOCKER_DOOD_GROUP" != "" ]]
     then
         /usr/local/bin/install_dood.sh $DOCKER_DOOD_GROUP

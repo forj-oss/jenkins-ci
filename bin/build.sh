@@ -57,7 +57,7 @@ fi
 
 if [ "$DOCKER_CMD" = "" ]
 then
-   DOCKER_CMD="sudo docker"
+   DOCKER_CMD="docker"
 fi
 
 echo "-------------------------"

@@ -31,11 +31,15 @@ RUN useradd -d "$JENKINS_HOME" -u 1000 -m -s /bin/bash jenkins && \
     yum -y install java jenkins-$JENKINS_VERSION unzip git && \
     yum clean all
 
+ADD https://github.com/forj-oss/docker-lu/releases/download/0.1/docker-lu /usr/bin/docker-lu
+ARG UID
+ARG GID
+
 COPY *.sh /usr/local/bin/
 ARG JPLUGINS_VERSION=latest
 ARG JPLUGINS_URL=https://github.com/forj-oss/jplugins/releases/download/${JPLUGINS_VERSION}/jplugins
 ADD $JPLUGINS_URL /usr/local/bin/jplugins
-RUN chmod +rx /usr/local/bin/jplugins && \
+RUN chmod +rx /usr/local/bin/jplugins /usr/bin/docker-lu && \
     unzip -jd $JENKINS_DATA_REF/plugins /usr/lib/jenkins/jenkins.war WEB-INF/*plugins/*.hpi && \
     /usr/local/bin/jplugins list-installed --jenkins-home=$JENKINS_DATA_REF --save-pre-installed && \
     rm -f $JENKINS_DATA_REF/plugins/*.hpi && \
