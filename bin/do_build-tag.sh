@@ -6,7 +6,7 @@ then
     echo "Dry run"
     shift
 else
-    export DOCKER_CMD="sudo docker"
+    export DOCKER_CMD="docker"
 fi
 
 export JENKINS_VERSION="$(echo "$1" | awk -F'|' '{ print $1 }')"
