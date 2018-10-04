@@ -13,6 +13,12 @@ then
         /usr/local/bin/install_dood.sh $DOCKER_DOOD_GROUP
     fi
 
+    if [[ "$(stat -c "%U" $JENKINS_HOME)" = "root" ]]
+    then
+        echo "Changing directory $JENKINS_HOME ownership to jenkins"
+        chown jenkins:jenkins $JENKINS_HOME
+    fi
+
     echo "Forcing Jenkins user."
     exec su jenkins /usr/local/bin/jenkins.sh "$@"
     # End
