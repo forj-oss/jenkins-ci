@@ -2,6 +2,6 @@
 1.642.4|1.6x-stable|redhat-stable
 1.658|1.6x-latest
 # LTS
-2.121.3|stable,2.x-stable|redhat-stable
+2.150.1|stable,2.x-stable|redhat-stable
 #
-2.141|2.x-latest,latest
+2.155|2.x-latest,latest
