@@ -26,6 +26,10 @@ if [[ $# -lt 1 ]] || [[ "$1" == "--"* ]]; then
    rm -f /var/jenkins_home/plugins/*.hpi /var/jenkins_home/plugins/*.jpi /var/jenkins_home/init.groovy.d/*.groovy 
    find /usr/share/jenkins/ref/ -type f -exec bash -c "copy_reference_file '{}'" \;
 
+   if [[ -f /usr/share/jenkins/ref/jplugins.lock ]]
+   then
+        cp -v /usr/share/jenkins/ref/jplugins.lock /var/jenkins_home/
+   fi
    for FILE in /var/jenkins_home/jenkins.start.d/*
    do
       [[ "$FILE" =~ \.sh$ ]] || continue
