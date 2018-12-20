@@ -19,6 +19,15 @@ then
         chown jenkins:jenkins $JENKINS_HOME
     fi
 
+    # Forjj define a socket dir if jenkins 
+    if [[ "$PLUGINS_SOCKET_DIR_NAME" != "" ]] && [[ -d "$PLUGINS_SOCKET_DIR_NAME" ]]
+    then
+        if [[ "$(stat -c "%U" "$PLUGINS_SOCKET_DIR_NAME")" = "root" ]]
+        then
+            echo "Setting jenkins:jenkins to '$PLUGINS_SOCKET_DIR_NAME'"
+            chown -v jenkins:jenkins "$PLUGINS_SOCKET_DIR_NAME"
+        fi
+    fi
     echo "Forcing Jenkins user."
     exec su jenkins /usr/local/bin/jenkins.sh "$@"
     # End
