@@ -29,6 +29,13 @@ then
    JENKINS_VERSION=$LATEST_JENKINS_VERSION
    echo "Using Jenkins version '$JENKINS_VERSION'."
 fi
+
+if [[ "$JENKINS_VERSION" =~ \* ]]
+then
+   echo "Identifying latest Jenkins version..."
+   curl -s https://pkg.jenkins.io/redhat/ | grep -e jenkins-2\..*\.noarch\.rpm | sed 's/^.*jenkins-\(2\..*\)\.noarch.rpm'"'"'.*$/\1/g' | head
+fi
+
 JENKINS_VERSION_ARG="--build-arg JENKINS_VERSION=$JENKINS_VERSION"
 
 if [ "$1" != "" ]
