@@ -69,5 +69,5 @@ fi
 
 echo "-------------------------"
 set -x
-[ $PUSH = true ] && $DOCKER_CMD pull $TAG_NAME || echo "Building it from scratch"
+$DOCKER_CMD pull $TAG_NAME
 $DOCKER_CMD build $PROXY $TAG_ARG $OS $JENKINS_VERSION_ARG $DOCKER_VERSION_ARG $JENKINS_INSTALL_URL_FLAG .

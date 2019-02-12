@@ -44,9 +44,6 @@ pipeline {
                                     bin/build.sh $TAG_BASE:$(getLastVersion)_$JENKINS_VERSION $JENKINS_REPO_SOURCE
                                     '''
                                 }
-                                stage('Test image ${version}') {
-                                    sh 'bin/test_build.sh'
-                                }
                             }
                         }
                     }
