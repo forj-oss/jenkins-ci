@@ -13,43 +13,63 @@ pipeline {
     triggers {
         cron('0 0 * * 2') //At 00:00 on Tuesday
     }
-// https://pkg.jenkins.io/redhat-stable/
     stages {
-        stage('Get latest weekly version'){
-            steps{
+        stage('Build Jenkins images') {
+            steps {
                 script {
-                    env.JENKINS_VERSION = sh(
-                        script: 'curl http://mirrors.jenkins.io/war/ | grep -oE ">[0-9]+\\.+[0-9]+\\.?[0-9]*" | tail -1 | cut -c 2-',
-                        returnStdout: true
-                    ).trim()
+                    def builds = [:]
+                    lines = sh(script:'''#!/bin/bash 
+                                     source bin/build-fcts.sh 
+                                     getReleaseTags
+                                     ''', returnStdout:true).trim().split('\n')
+                    lines.each { String f ->
+                        def (version, tags, source)=f.tokenize("|")
+                        builds["${version}"] = {
+                            node {
+                                checkout scm
+
+                                stage("version ${version}") {
+                                    script {
+                                        env.JENKINS_VERSION = "${version}"
+                                        def JenkinsSource = "${source}"
+                                        if (JenkinsSource == "null") {
+                                            JenkinsSource="redhat"
+                                        }
+                                        env.JENKINS_REPO_SOURCE = "${JenkinsSource}"
+                                    }
+                                    sh '''#!/bin/bash -e
+
+                                    source bin/build-fcts.sh
+                                    set -x
+                                    bin/build.sh $TAG_BASE:$(getLastVersion)_$JENKINS_VERSION $JENKINS_REPO_SOURCE
+                                    '''
+                                }
+                                stage('Test image ${version}') {
+                                    sh 'bin/test_build.sh'
+                                }
+                            }
+                        }
+                    }
+                parallel builds
                 }
             }
         }
 
-        stage ('Set environments'){
-            steps{
-                script {
-                    env.TAG_NAME = "docker.dxc.com:8085/devops-jenkins-base:${JENKINS_VERSION}-${BUILD_NUMBER}"
-                }
-            }
-        }
-        
-        stage('Build Image') {
+
+        stage ('Push images to dockerhub'){
             environment{
-               // REDHAT_REPO="redhat-stable" //Use this variable to use only stable versions otherwise use blank string
-                REDHAT_REPO="redhat" //Use weekly version
+                GITHUB_REPO="jenkins-ci"
+                GITHUB_USER="forj-oss"
             }
+            when { branch 'master' }
             steps {
-                sh 'bash ./bin/build.sh $TAG_NAME $REDHAT_REPO' 
-            }
-        }
-
-        stage ('Push container to artifactory'){
-            steps {
-                withCredentials([usernamePassword(credentialsId:'pdxc-jenkins',usernameVariable: 'ARTIFACTORY_USER', passwordVariable:'ARTIFACTORY_PASSWORD')]){                 
+                withCredentials([
+                    usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD'),
+                    usernamePassword(credentialsId: 'github-jenkins-cred', passwordVariable: 'GITHUB_TOKEN')
+                    ]) {
                     sh '''
-                        docker login docker.dxc.com:8085 --username $ARTIFACTORY_USER --password $ARTIFACTORY_PASSWORD
-                        docker push $TAG_NAME
+                        docker login --username $DOCKERHUB_USERNAME --password $DOCKERHUB_PASSWORD
+                        bin/publish_alltags.sh
                     '''
                 }
             }

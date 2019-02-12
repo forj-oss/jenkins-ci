@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
 
 if [  "$1" = "--dry-run" ]
 then

@@ -1,6 +1,6 @@
-#
-1.642.4|1.6x-stable|redhat-stable
-1.658|1.6x-latest
+# Old 1.x Jenkins version
+regexp:1\..*|1.6x-stable|redhat-stable
+regexp:1\..*|1.6x-latest
 # LTS
 regexp:2\..*|stable,2.x-stable|redhat-stable
 # Latest

@@ -6,14 +6,16 @@ BASE_TAG="jenkins"
 
 JENKINS_FEATURES_REPO=https://github.com/forj-oss/jenkins-install-inits
 
+source $(dirname $0)/build-fcts.sh
+
 if [ "$http_proxy" != "" ]
 then
-   PROXY=" --build-arg http_proxy=$http_proxy --build-arg https_proxy=$https_proxy --build-arg no_proxy=$no_proxy"
+   PROXY=" --build-arg http_proxy --build-arg https_proxy"
    echo "Using your local proxy setting : $http_proxy"
    if [ "$no_proxy" != "" ]
    then
-      PROXY="$PROXY --build-arg no_proxy=$no_proxy"
-      echo "no_proxy : $http_proxy"
+      PROXY="$PROXY --build-arg no_proxy"
+      echo "no_proxy : $no_proxy"
    fi
 fi
 
@@ -22,19 +24,17 @@ then
    DOCKER_VERSION_ARG="--build-arg DOCKER_VERSION=$DOCKER_VERSION"
 fi
 
-LATEST_JENKINS_VERSION="$(awk -F"|" '$2 ~ /^latest/ || $2 ~ /,latest/ { printf "%s\n",$1 }' releases.lst)"
-
-if [ "$JENKINS_VERSION" = "" ]
+SOURCE="$2"
+if [[ "$SOURCE" = "" ]]
 then
-   JENKINS_VERSION=$LATEST_JENKINS_VERSION
-   echo "Using Jenkins version '$JENKINS_VERSION'."
+   SOURCE=redhat
 fi
 
-if [[ "$JENKINS_VERSION" =~ \* ]]
+if [[ "$JENKINS_VERSION" = "" ]]
 then
-   echo "Identifying latest Jenkins version..."
-   curl -s https://pkg.jenkins.io/redhat/ | grep -e jenkins-2\..*\.noarch\.rpm | sed 's/^.*jenkins-\(2\..*\)\.noarch.rpm'"'"'.*$/\1/g' | head
+   jenkinsVersion "regexp:.*" $2
 fi
+echo "Using jenkins version $JENKINS_VERSION in branch $2."
 
 JENKINS_VERSION_ARG="--build-arg JENKINS_VERSION=$JENKINS_VERSION"
 
