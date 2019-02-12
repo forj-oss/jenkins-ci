@@ -68,6 +68,14 @@ then
 fi
 
 echo "-------------------------"
-set -x
-$DOCKER_CMD pull $TAG_NAME
+set +e
+if [[ "$SOURCE" = "redhat " ]]
+then
+   set -x
+   $DOCKER_CMD pull $TAG_BASE:$(getLastVersion)_latest
+else
+   set -x
+   $DOCKER_CMD pull $TAG_BASE:$(getLastVersion)_stable
+fi
+set -e
 $DOCKER_CMD build $PROXY $TAG_ARG $OS $JENKINS_VERSION_ARG $DOCKER_VERSION_ARG $JENKINS_INSTALL_URL_FLAG .
