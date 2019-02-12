@@ -51,6 +51,38 @@ function isReleaseable() {
     fi
 }
 
+# isPreReleaseable return true(0) when the code is 
+# Prepared to be released (not in master)
+# and the release note is not ready
+#
+# A release note not ready is the release_<version>.md when the 
+# delivery date is > now or not set.
+# The delivery date is written as case insensitive:
+# "Date: <YYYY/MM/DD>"
+#
+# it returns true, when the date identified in 
+# the release note date is the current or later date
+#
+function isReleaseMergeable() {
+    if ! isReleaseable 
+    then
+        return 3
+    fi
+
+    local releaseDate="$(grep -i -e "date *: *[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9])" release-notes/release-$(getLastVersion).md | sed 's/.*date *: *\([0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]\).*/\1/gi')"
+    if [[ "$releaseDate" = "" ]]
+    then
+        return 2
+    fi
+    let diff=(`date +%s`- `date +%s -d $releaseDate` )
+
+    if [[ $diff -gt 0 ]]
+    then
+        return
+    fi
+    return 1
+}
+
 function isMaster() {
     local branch=$(git rev-parse --abbrev-ref HEAD)
     if [[ $branch != "master" ]] || [[ "$BRANCH_NAME" != master ]]
