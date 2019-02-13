@@ -76,6 +76,7 @@ function isReleaseMergeable() {
     fi
     let diff=(`date +%s`- `date +%s -d $releaseDate` )
 
+    echo "$releaseDate"
     if [[ $diff -gt 0 ]]
     then
         return

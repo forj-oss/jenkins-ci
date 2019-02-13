@@ -53,6 +53,38 @@ pipeline {
         }
 
 
+        stage ('check release status') {
+            when {
+                expression {
+                    def releaseStatus = sh(
+                        script: '''#!/bin/bash
+                            source bin/build-fcts.sh
+                            isReleaseable
+                            ''',
+                        returnStatus: true
+                    )
+                    return releaseStatus == 0
+               }
+            }
+            steps {
+                sh(
+                    '''#!/bin/bash
+                    echo "Checking release note document..."
+                    source bin/build-fcts.sh
+                    local DATE=$(isReleaseMergeable)
+                    case $?
+                      0)
+                         echo "Ready to be merged"
+                         ;;
+                      1)
+                         echo "Release not ready. Release date is currently empty. Missing 'date : YYYY/MM/DD' in the document."
+                         ;;
+                      2) 
+                         echo "Release prepared but not ready. The PR will be mergeable up to $DATE."
+                    '''
+                )
+            }
+        }
         stage ('Push images to dockerhub'){
             environment{
                 GITHUB_REPO="jenkins-ci"
