@@ -28,7 +28,7 @@ ARG OS=redhat-stable
 ADD https://pkg.jenkins.io/$OS/jenkins.repo /etc/yum.repos.d/jenkins.repo
 RUN useradd -d "$JENKINS_HOME" -u 1000 -m -s /bin/bash jenkins && \
     rpm --import https://pkg.jenkins.io/$OS/jenkins.io.key && \
-    yum -y install java-11-openjdk.x86_64 jenkins-$JENKINS_VERSION unzip git && \
+    yum -y install java jenkins-$JENKINS_VERSION unzip git && \
     yum clean all
 
 ADD https://github.com/forj-oss/docker-lu/releases/download/0.1/docker-lu /usr/bin/docker-lu
